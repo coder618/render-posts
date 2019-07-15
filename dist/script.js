@@ -37,7 +37,7 @@ jQuery(document).ready(function( $ ){
         },
         success: function (response) {
           console.log(response)
-          if(response){
+          if(response && response.length > 6){
   
             // append the html to the container
             $("."+posts_container).append(response)
