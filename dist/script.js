@@ -1,5 +1,5 @@
 jQuery(document).ready(function( $ ){
-  
+
     console.log("ajax post loader loaded")
   
     $("button.load-more-posts-btn").on("click", function(e){
@@ -29,7 +29,7 @@ jQuery(document).ready(function( $ ){
           function_name : function_name,
           posts_per_page: $posts_per_page,
           nonce: nonce,
-          action: 'load_more_posts'
+          action: 'rp_load_more_posts'
         },
         error: function (response) {
           // console.log("error ", response)
@@ -48,8 +48,7 @@ jQuery(document).ready(function( $ ){
             $this.attr("disabled", false);
   
           }else{
-            $this.remove()
-  
+            $this.remove()  
           }
   
   

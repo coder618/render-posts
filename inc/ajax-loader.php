@@ -1,6 +1,6 @@
 <?php
-add_action( 'wp_ajax_nopriv_load_more_posts', 'rp_load_more_posts' );
-add_action( 'wp_ajax_load_more_posts', 'rp_load_more_posts' );
+add_action( 'wp_ajax_nopriv_rp_load_more_posts', 'rp_load_more_posts' );
+add_action( 'wp_ajax_rp_load_more_posts', 'rp_load_more_posts' );
 
 function rp_load_more_posts(){    
     // check nonce
