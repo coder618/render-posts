@@ -7,7 +7,7 @@
   loadmore=true
 ]
 */
-function render_posts( $atts ){
+function rp_render_posts( $atts ){
 
     foreach( $atts as $k=>$v ):
         $atts[$k] =  trim(strip_tags($v)) ;
@@ -24,7 +24,7 @@ function render_posts( $atts ){
 
     // check if function post template avaiable otherwise we will use default one
     if(!function_exists($render_func)){
-        $render_func = 'default_post_template';
+        $render_func = 'rp_default_post_template';
     }
 
 
@@ -131,4 +131,4 @@ function render_posts( $atts ){
     return $html;
 
 }
-add_shortcode( 'render-posts', 'render_posts' );
+add_shortcode( 'render-posts', 'rp_render_posts' );

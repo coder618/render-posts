@@ -1,8 +1,8 @@
 <?php
-add_action( 'wp_ajax_nopriv_load_more_posts', 'load_more_posts' );
-add_action( 'wp_ajax_load_more_posts', 'load_more_posts' );
+add_action( 'wp_ajax_nopriv_load_more_posts', 'rp_load_more_posts' );
+add_action( 'wp_ajax_load_more_posts', 'rp_load_more_posts' );
 
-function load_more_posts(){    
+function rp_load_more_posts(){    
     // check nonce
     if( isset($_POST['nonce']) && 
         wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 1  || 
@@ -22,7 +22,7 @@ function load_more_posts(){
 
         // check if function post template avaiable otherwise we will use default one
         if(!function_exists($function_name)){
-            $function_name = 'default_post_template';
+            $function_name = 'rp_default_post_template';
         }
 
         $args = array(

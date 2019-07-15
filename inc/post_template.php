@@ -1,7 +1,7 @@
 <?php 
 
 // Default post template 
-function default_post_template($data){
+function rp_default_post_template($data){
     $c_id = $data->ID; 
     $title = get_the_title($c_id);
     $post_img_id = get_post_thumbnail_id($c_id);
