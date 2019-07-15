@@ -22,6 +22,12 @@ function render_posts( $atts ){
     $total_posts = wp_count_posts($type)->publish;
     $containe_title = false;
 
+    // check if function post template avaiable otherwise we will use default one
+    if(!function_exists($render_func)){
+        $render_func = 'default_post_template';
+    }
+
+
     if( isset($number) ){
         $posts_per_page = $number;
     }else{
@@ -65,8 +71,8 @@ function render_posts( $atts ){
 
     
     
-    // Check If current shown post is gratter than total post
-    if( $total_posts > count($posts_arr)  ){
+    // Check If current shown post is gratter than total post and no loadmore define
+    if( $total_posts > count($posts_arr)  && !isset($noloadmore) ){
         $attr= [];
         $loadmore_att_str = '';
         $admin_url = admin_url('admin-ajax.php');
@@ -88,7 +94,7 @@ function render_posts( $atts ){
             $loadmore_att_str .= $att . " = '".$att_val."'";                    
         }
 
-        $load_more_html .= '<div class="button-container">';
+        $load_more_html .= '<div class="render-posts-loadmore-btn-container button-container">';
             $load_more_html .= '<button '.$loadmore_att_str.' >Load More</button>';            
         $load_more_html .= "</div>";
     } 
@@ -106,10 +112,10 @@ function render_posts( $atts ){
 
             $html .= $title_html;
 
-            $html .= "<div class='items items-container $uid post-type-".$type."'>";
+            $html .= "<div class='items items-container render-posts-items $uid post-type-".$type."'>";
 
                 foreach( $posts_arr as $sp_data ):
-                    $html .= "<div class='item'>";        
+                    $html .= "<div class='item render-posts-item'>";     
                         $html .= $render_func($sp_data);	
                     $html .= "</div>";
                 endforeach;
@@ -119,41 +125,10 @@ function render_posts( $atts ){
             $html .= $load_more_html;
 
         $html .= "</div>";
-            
-
 
     $html .= '</div>';
 
     return $html;
-    // return '';
-
-
-
 
 }
 add_shortcode( 'render-posts', 'render_posts' );
-
-
-
-
-/*
-Shorcode Name: title-section
-[title-section title=title detail="detail text"]
-*/
-function register_title_section($atts){
-	ob_start();
-	$max_width = ( isset($atts['width']) ) ? "style='max-width:".$atts['width']."'" : null;
-	?>
-
-	<div class="page-title-shortcode" <?php echo $max_width ?>>
-		<?php if( isset($atts['title'] ) && !empty( $atts['title'] ) ): ?>
-			<h1> <?php _e( $atts['title'], 'boomerang' ) ?> </h1>
-		<?php endif ?>
-		<?php if( isset($atts['detail'] ) &&  !empty( $atts['detail'] ) ): ?>
-			<p class="detail" ><?php _e( $atts['detail'], 'boomerang' ) ?></p>
-		<?php endif ?>
-	</div>
-	
-	<?php	return ob_get_clean();
-}
-add_shortcode( 'title-section', 'register_title_section' );

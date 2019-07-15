@@ -15,10 +15,15 @@ function load_more_posts(){
         
         $post_type        = sanitize_text_field($_POST['post_type']);
         $page             = (int)(trim($_POST['page'])) + 1 ;
-        $post_per_page    = trim($_POST['posts_per_page']);
+        $post_per_page    = sanitize_text_field(trim($_POST['posts_per_page']));
         $function_name    = sanitize_text_field($_POST['function_name']);
         
-        $html             = '';        
+        $html             = '';
+
+        // check if function post template avaiable otherwise we will use default one
+        if(!function_exists($function_name)){
+            $function_name = 'default_post_template';
+        }
 
         $args = array(
             'post_type' => $post_type,

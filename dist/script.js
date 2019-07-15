@@ -1,5 +1,5 @@
-
 jQuery(document).ready(function( $ ){
+  
     console.log("ajax post loader loaded")
   
     $("button.load-more-posts-btn").on("click", function(e){
