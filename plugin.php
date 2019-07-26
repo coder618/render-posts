@@ -8,7 +8,7 @@
  * Version: 1.0.0 
 */
 
-require_once 'inc/ajax-loader.php';
-require_once 'inc/enque.php';
-require_once 'inc/post_template.php';
-require_once 'inc/register_shortcode.php';
+require_once 'inc/ajax-loader.php'; // ajax request handler
+require_once 'inc/enque.php'; // enque all the necessery file
+require_once 'inc/post_template.php'; // default post template
+require_once 'inc/register_shortcode.php'; // shortcode register

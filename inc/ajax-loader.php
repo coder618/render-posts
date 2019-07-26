@@ -20,7 +20,7 @@ function rp_load_more_posts(){
         
         $html             = '';
 
-        // check if function post template avaiable otherwise we will use default one
+        // check if user define any function for the post template, otherwise we will use plugin default one
         if(!function_exists($function_name)){
             $function_name = 'rp_default_post_template';
         }
