@@ -5,11 +5,10 @@ jQuery(document).ready(function( $ ){
     $("button.load-more-posts-btn").on("click", function(e){
       e.preventDefault()
       var $this = $(this);
-      console.log("post loader clicked")
   
-      $this.attr("disabled", true); // Disable The BTN first
+      $this.attr("disabled", true); // Disable The BTN first to prevent 2x clicck
       $this.addClass("loading-state")
-      var $old_btn_text = $this.text(); // Grabe the text it have to use later
+      var $old_btn_text = $this.text(); // Grabe the text it have, to use later
       $this.text("Loading");
   
       var $page = $this.attr('data-page');
@@ -50,11 +49,6 @@ jQuery(document).ready(function( $ ){
           }else{
             $this.remove()  
           }
-  
-  
-          
-  
-  
         }
   
       }); // ajax call end

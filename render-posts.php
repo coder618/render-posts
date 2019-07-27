@@ -14,7 +14,6 @@ class Render_Posts_Main{
         $this->reg_hooks();
 	}
 
-
     private function load_dependencies() {
 
 		/**
@@ -32,27 +31,26 @@ class Render_Posts_Main{
     /**
      * All the Hook of this plugin will register within this methode
      * 
-     * 
      */
-
-    public function reg_hooks(){
+    private function reg_hooks(){
         // enqueue scripts
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+
+        // register shortcode
+        add_shortcode("render-posts", [ new Render_Post_Register_shortcode(), 'render_posts'] );
 
         // Register Ajax Callback
         add_action( 'wp_ajax_nopriv_render_posts_ajax_loadmore', [ new Render_Posts_Ajax() , 'render_posts_ajax_loadmore'] );
         add_action( 'wp_ajax_render_posts_ajax_loadmore',[ new Render_Posts_Ajax() , 'render_posts_ajax_loadmore'] );
         
-        // register shortcode
-        add_shortcode("render-posts", [ new Render_Post_Register_shortcode(), 'render_posts'] );
-
+        
     }
 
     /**
      * Enque all Necessery assets
      * 
      */
-    public function enqueue_assets() {
+    private function enqueue_assets() {
         wp_enqueue_script( 'render-posts-js', plugin_dir_url( __FILE__ ). 'dist/render-posts-script.js'  , ['jquery'], 1,true );
         wp_enqueue_style( 'render-posts-styles', plugin_dir_url( __FILE__ ). 'dist/style.css', [], 1, 'all' );
 	}
