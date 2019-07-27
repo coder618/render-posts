@@ -50,7 +50,7 @@ class Render_Posts_Main{
      * Enque all Necessery assets
      * 
      */
-    private function enqueue_assets() {
+    public function enqueue_assets() {
         wp_enqueue_script( 'render-posts-js', plugin_dir_url( __FILE__ ). 'dist/render-posts-script.js'  , ['jquery'], 1,true );
         wp_enqueue_style( 'render-posts-styles', plugin_dir_url( __FILE__ ). 'dist/style.css', [], 1, 'all' );
 	}
