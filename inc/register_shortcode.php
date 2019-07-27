@@ -8,10 +8,13 @@
 ]
 */
 
-
 class Render_Post_Register_shortcode{    
+
+    public function __construct() {
+        // add_shortcode("render-posts", $this->render_posts() );
+    }
     
-    private function render_posts( $atts ){
+    public function render_posts( $atts ){
     
         foreach( $atts as $k=>$v ):
             $atts[$k] =  trim(strip_tags($v)) ;
@@ -27,9 +30,9 @@ class Render_Post_Register_shortcode{
         $containe_title = false;
     
         // check if function post template avaiable otherwise we will use default one
-        if(!function_exists($render_func)){
-            $render_func = 'rp_default_post_template';
-        }
+        // if(!function_exists($render_func)){
+        //     $render_func = 'rp_default_post_template';
+        // }
     
     
         if( isset($number) ){
@@ -119,8 +122,13 @@ class Render_Post_Register_shortcode{
                 $html .= "<div class='items items-container render-posts-items $uid post-type-".$type."'>";
     
                     foreach( $posts_arr as $sp_data ):
-                        $html .= "<div class='item render-posts-item'>";     
-                            $html .= $render_func($sp_data);	
+                        $html .= "<div class='item render-posts-item'>";                              
+                            // check if there have any render_$post_type or note, if not we will use our default function 
+                            if(function_exists($render_func)){
+                                $html .= $render_func($sp_data->ID);
+                            }else{
+                                $html .= $this->default_template($sp_data->ID);
+                            }
                         $html .= "</div>";
                     endforeach;
                     
@@ -135,10 +143,31 @@ class Render_Post_Register_shortcode{
         return $html;
     
     }
+
+    /**
+     * Default Post template 
+     * It will called when user will not provide any post template 
+     * related with his posttype
+     */
+    private function  default_template($id){
+        $c_id = $id; 
+        $title = get_the_title($c_id);
+        $post_img_id = get_post_thumbnail_id($c_id);
+        $post_img_url = return_post_img_url( $c_id , 'large' );
+        $title = get_the_title($c_id);
+        $html = '';
+
+        $html .= '<a href="'.get_permalink().'" class="default-post-template">';
+            $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
+            
+            $html .= '<div class="text-section">';
+                $html .= '<h3 class="title">'.$title.'</h3>';            
+            $html .= '</div>';
+        $html .= '</a>';
+
+        return $html;
+
+    }
     
 
 }
-
-
-
-add_shortcode( 'render-posts', 'rp_render_posts' );

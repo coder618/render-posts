@@ -29,7 +29,7 @@ jQuery(document).ready(function( $ ){
           function_name : function_name,
           posts_per_page: $posts_per_page,
           nonce: nonce,
-          action: 'rp_load_more_posts'
+          action: 'render_posts_ajax_loadmore'
         },
         error: function (response) {
           // console.log("error ", response)
