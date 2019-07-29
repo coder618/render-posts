@@ -15,11 +15,19 @@ class Render_Post_Register_shortcode{
     }
     
     public function render_posts( $atts ){
-    
+
+
+
+        // Remove unnecessery thing from string
         foreach( $atts as $k=>$v ):
             $atts[$k] =  trim(strip_tags($v)) ;
         endforeach;
         extract($atts);
+
+        //exit if type not porvide
+        if( !isset($type) ){
+            return '';
+        }
     
         $html = '';
         $title_html = '';
@@ -28,11 +36,7 @@ class Render_Post_Register_shortcode{
         $render_func = $type.'_template';
         $total_posts = wp_count_posts($type)->publish;
         $containe_title = false;
-    
-        // check if function post template avaiable otherwise we will use default one
-        // if(!function_exists($render_func)){
-        //     $render_func = 'rp_default_post_template';
-        // }
+
     
     
         if( isset($number) ){
@@ -68,7 +72,7 @@ class Render_Post_Register_shortcode{
             $containe_title = true;
         }
     
-        // Prepair the title html if user provide
+        // Prepair the title and the detail html if user provide
         if($containe_title===true){
             $title_html .= '<div class="page-title-section">';
                 $title_html .= !empty($title) ? "<h2>$title</h2>" : '' ;
@@ -78,7 +82,11 @@ class Render_Post_Register_shortcode{
     
         
         
-        // Check If current shown post is gratter than total post and no loadmore define
+        /**
+         * Prepair the loadmore button html
+         * 
+         */
+        // Check If current shown posts is smaller than total post and no loadmore define
         if( $total_posts > count($posts_arr)  && !isset($noloadmore) ){
             $attr= [];
             $loadmore_att_str = '';
@@ -111,7 +119,8 @@ class Render_Post_Register_shortcode{
         if( isset($bg) && !empty($bg) ){
             $background = 'bg-gray' ;
         }
-    
+        
+        // Prepair wraper class
         $wraper_class = 'posts-wraper '.$type.'-posts-wraper '.$background  ;
     
         $html .= "<div class='".$wraper_class."' >";

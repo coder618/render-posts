@@ -38,7 +38,7 @@ class Render_Posts_Ajax{
             $receive_posts = get_posts($args);
 
             foreach( $receive_posts as $s_p ):                
-                $html .= "<div class='item'>";
+                $html .= "<div class='item render-posts-item'>";
 
                     // check if user define any function for the post template, otherwise we will use plugin default one
                     if(function_exists($function_name)){
