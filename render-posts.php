@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Render Posts
- * Description: Render Posts Easily
+ * Description: Render Posts Easily with Shortcode.   [render-posts ]
  * Author: coder618
  * Author URI: https://coder618.github.io
  * Version: 1.0.0 

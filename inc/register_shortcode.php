@@ -120,11 +120,11 @@ class Render_Post_Register_shortcode{
             $background = 'bg-gray' ;
         }
         
-        // Prepair wraper class
-        $wraper_class = 'posts-wraper '.$type.'-posts-wraper '.$background  ;
+        // Prepair wrapper class
+        $wrapper_class = 'render-posts-main-wrapper '.$type.'-posts-wrapper '.$background  ;
     
-        $html .= "<div class='".$wraper_class."' >";
-            $html .= "<div class='container'>";
+        $html .= "<div class='".$wrapper_class."' >";
+            $html .= "<div class='posts-wrapper ".$type."-wrapper'>";
     
                 $html .= $title_html;
     
