@@ -10,18 +10,17 @@ License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
-This plugin will help developer to show/render you posts/custom posts(CPT) very easily.
-This plugin generate a shortcode, which you can use to render any type posts in your custom html formate with all you PHP condition available.
-This Plugin also have a function to load your post by Ajax. 
+This plugin will help developer to show/render posts/custom posts(CPT) very easily.
+This plugin generate a shortcode, which you can use to render any kind of posts in your custom html formate where all you PHP condition available.
+This Plugin also have a function to load your post's by Ajax.
 This plugin also support with Gutenberg. 
 
 == Installation ==
-1. Upload the plugin files to the `/wp-content/plugins/plugin-name` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin folder to the `/wp-content/plugins` directory, or install the plugin through the WordPress plugins screen directly.
 1. Activate the plugin through the 'Plugins' screen in WordPress.
 
 This plugin do not have any settings page, so after install you just have to active the plugin, thats it.
-Then you can use [render-post] shortcode to render/show you posts very easily.
-This section describes how to install the plugin and get it working.
+Then you can use [render-post] shortcode to render/show your posts.
 
 == Frequently Asked Questions ==
 
@@ -71,18 +70,18 @@ eg. [render-posts type="post"]
 How to add Custom Post template.
 
 To make a custom post template you have to crate a php function with a specific name. 
-And Your function has to RETURN(NOT ECHO) the whole markup as a string. This function will have one argument post id.
+And Your function have to RETURN(NOT echo) the whole markup as a string. This function will have one argument post id.
 
-Function Name: postType_template() ,
-eg: post_template() , event_template(), member_template() for post, event and member Post Type.
+Function Name: postType_template($post_id) ,
+eg: post_template($post_id) , event_template($post_id), member_template($post_id) for post, event and member Post Type.
 
 Example function:
-// For Post post type.
-`function post_template($p_id){
-    $title = get_the_title($p_id);
-    $post_img_id = get_post_thumbnail_id($p_id);
-    $post_img_url = return_post_img_url( $p_id , 'large' );
-    $title = get_the_title($p_id);
+// Template For Post post type.
+`function post_template($post_id){
+    $title = get_the_title($post_id);
+    $post_img_id = get_post_thumbnail_id($post_id);
+    $post_img_url = return_post_img_url( $post_id , 'large' );
+    $title = get_the_title($post_id);
     $html = '';
 
     $html .= '<a href="'.get_permalink().'" class="default-post-template">';
@@ -96,9 +95,8 @@ Example function:
     return $html;
 }`
 
-
-Your defined  template function will receive a single post id  as its first argument. you can use the id to manupulate/make the posts mark template.
-After create the function, you have to attatched/link your created function to function.php or via other plugin so that your created function can be access from any place.
+Your defined  template function will receive a single post id  as its first argument. you can use the id to manupulate/make the posts markup for post/cpt template.
+After create the function, you have to Attached/link your created function to function.php or via other plugin so that your created function can be access from any place from the wordpress.
 
 
 Note : You have to return the markup, you cant echo the markup from the function. It can  cause error.

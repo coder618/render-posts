@@ -76,7 +76,7 @@ class Render_Post_Register_shortcode{
         if($containe_title===true){
             $title_html .= '<div class="page-title-section">';
                 $title_html .= !empty($title) ? "<h2>$title</h2>" : '' ;
-                $title_html .= !empty($title) ? "<p>$detail</p>": '';
+                $title_html .= !empty($detail) ? "<p>$detail</p>": '';
             $title_html .= "</div>";
         }
     
