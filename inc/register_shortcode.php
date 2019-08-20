@@ -15,19 +15,18 @@ class Render_Post_Register_shortcode{
     }
     
     public function render_posts( $atts ){
-
-
+        
+        //exit if type not porvide
+        if( !array_key_exists('type', $atts) &&  empty($type) ){
+            return '';
+        }
 
         // Remove unnecessery thing from string
         foreach( $atts as $k=>$v ):
-            $atts[$k] =  trim(strip_tags($v)) ;
+            $atts[$k] =  trim( filter_var( strip_tags($v),FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH ) ) ;
         endforeach;
-        extract($atts);
 
-        //exit if type not porvide
-        if( !isset($type) ){
-            return '';
-        }
+        extract($atts);
     
         $html = '';
         $title_html = '';
@@ -74,7 +73,7 @@ class Render_Post_Register_shortcode{
     
         // Prepair the title and the detail html if user provide
         if($containe_title===true){
-            $title_html .= '<div class="page-title-section">';
+            $title_html .= '<div class="post-title-section">';
                 $title_html .= !empty($title) ? "<h2>$title</h2>" : '' ;
                 $title_html .= !empty($detail) ? "<p>$detail</p>": '';
             $title_html .= "</div>";
