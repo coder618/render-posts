@@ -15,16 +15,22 @@ class Render_Post_Register_shortcode{
     }
     
     public function render_posts( $atts ){
-        
-        //exit if type not porvide
-        if( !array_key_exists('type', $atts) &&  empty($type) ){
-            return '';
-        }
+
 
         // Remove unnecessery thing from string
         foreach( $atts as $k=>$v ):
             $atts[$k] =  trim( filter_var( strip_tags($v),FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH ) ) ;
         endforeach;
+
+        // Get all the registered post information
+        global $wp_post_types;
+        // store post slug in a array
+        $posts_type_arr = array_keys( $wp_post_types );
+
+        //exit if type not porvide and invalid post type
+        if(  !array_key_exists('type', $atts)  || !in_array($atts['type'],$posts_type_arr) ){
+            return '';
+        }
 
         extract($atts);
     
