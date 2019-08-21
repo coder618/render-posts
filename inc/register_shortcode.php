@@ -16,24 +16,41 @@ class Render_Post_Register_shortcode{
     
     public function render_posts( $atts ){
 
-
-        // Remove unnecessery thing from string
-        foreach( $atts as $k=>$v ):
-            $atts[$k] =  trim( filter_var( strip_tags($v),FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH ) ) ;
+        /**
+         * SANITIZE Inputs
+         * 
+        */     
+        $valid_vars = [];
+        foreach( $atts as $k=>$v ):            
+            $k = filter_var( sanitize_text_field($k) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+            $v = filter_var( sanitize_text_field($v) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+            $valid_vars[$k] =  $v;
         endforeach;
 
+        extract($valid_vars);
+
+        /**
+         * Validate Input Information
+         * 
+        */        
         // Get all the registered post information
         global $wp_post_types;
         // store post slug in a array
         $posts_type_arr = array_keys( $wp_post_types );
 
         //exit if type not porvide and invalid post type
-        if(  !array_key_exists('type', $atts)  || !in_array($atts['type'],$posts_type_arr) ){
+        if(  !isset($type)  || !in_array($type,$posts_type_arr) ){
             return '';
         }
+        // collect posts per page
+        if( isset($number) && is_numeric( $number ) ){
+            $posts_per_page = $number;
+        }else{
+            $posts_per_page = get_option( 'posts_per_page' );        
+        }
+        
+        
 
-        extract($atts);
-    
         $html = '';
         $title_html = '';
         $load_more_html = '';
@@ -41,29 +58,6 @@ class Render_Post_Register_shortcode{
         $render_func = $type.'_template';
         $total_posts = wp_count_posts($type)->publish;
         $containe_title = false;
-
-    
-    
-        if( isset($number) ){
-            $posts_per_page = $number;
-        }else{
-            $posts_per_page = get_option( 'posts_per_page' );        
-        }
-    
-        if(isset($meta)){
-            $meta_items =  explode(",",$meta);
-            $arr_n =  count( $meta_items );
-    
-            if( $arr_n > 0 ){
-                $args['meta_query'] =	[
-                    [
-                        'key'=> trim($meta_items[0]),
-                        'value' => trim($meta_items[1]),
-                        'compare' => 'IN'
-                    ]
-                ];
-            }
-        }
     
         // Get the posts
         $posts_arr = get_posts( [
@@ -103,7 +97,7 @@ class Render_Post_Register_shortcode{
             $attr['data-pagenumber'] = 1;
             $attr['data-ajax-url'] = $admin_url;
             $attr['data-container'] = $uid;
-            $attr['data-functionname'] = $render_func;
+            $attr['data-functionname'] =  $render_func;
             $attr['data-page'] = 1;
             $attr['data-nonce'] = wp_create_nonce("loadmore_ajax_request");
     
@@ -154,7 +148,7 @@ class Render_Post_Register_shortcode{
     
         $html .= '</div>';
     
-        return $html;
+        return ($html);
     
     }
 
@@ -165,17 +159,15 @@ class Render_Post_Register_shortcode{
      */
     private function  default_template($id){
         $c_id = $id; 
-        $title = get_the_title($c_id);
-        $post_img_id = get_post_thumbnail_id($c_id);
-        $post_img_url = return_post_img_url( $c_id , 'large' );
-        $title = get_the_title($c_id);
+        $post_img_url = get_the_post_thumbnail_url($c_id, 'large');
+        $title = esc_html(get_the_title($c_id));
         $html = '';
 
         $html .= '<a href="'.get_permalink().'" class="default-post-template">';
             $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
             
             $html .= '<div class="text-section">';
-                $html .= '<h3 class="title">'.$title.'</h3>';            
+                $html .= '<h3 class="title">'.$title.'</h3>';
             $html .= '</div>';
         $html .= '</a>';
 
