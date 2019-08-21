@@ -71,7 +71,7 @@ class Render_Post_Register_shortcode{
             $containe_title = true;
         }
     
-        // Prepair the title and the detail html if user provide
+        // Prepare the title and the detail html if user provide
         if($containe_title===true){
             $title_html .= '<div class="post-title-section">';
                 $title_html .= !empty($title) ? "<h2>$title</h2>" : '' ;
@@ -82,7 +82,7 @@ class Render_Post_Register_shortcode{
         
         
         /**
-         * Prepair the loadmore button html
+         * Prepare the loadmore button html
          * 
          */
         // Check If current shown posts is smaller than total post and no loadmore define

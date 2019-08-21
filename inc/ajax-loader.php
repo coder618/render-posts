@@ -5,25 +5,31 @@ class Render_Posts_Ajax{
 
 
     public function render_posts_ajax_loadmore(){    
-        // echo "LOL";
-        // die();
         
         // check nonce
         if( isset($_POST['nonce']) && 
             wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 1  || 
-            wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 2 ) :
-            
+            wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 2 ) :            
             // filter input
-            foreach($_POST as $k => $i_v):
-                $_POST[$k] = trim(strip_tags($i_v));
+            foreach($_POST as $k => $v):
+                $k = filter_var( sanitize_text_field($k) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+                $v = filter_var( sanitize_text_field($v) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+                $_POST[$k] = $v;
             endforeach;
             
-            $post_type        = sanitize_text_field($_POST['post_type']);
-            $page             = (int)(trim($_POST['page'])) + 1 ;
-            $post_per_page    = sanitize_text_field(trim($_POST['posts_per_page']));
-            $function_name    = sanitize_text_field($_POST['function_name']);
+            $post_type        = filter_var(sanitize_text_field($_POST['post_type']) ,FILTER_SANITIZE_STRING    );
+            $post_per_page    = filter_var(sanitize_text_field($_POST['posts_per_page']),FILTER_SANITIZE_STRING    );
+            $function_name    = filter_var(sanitize_text_field($_POST['function_name']),FILTER_SANITIZE_STRING    );
             
-            $html             = '';
+            // collect posts per page
+            if( is_numeric( (int) $page ) ){
+                $page             = (int)(trim($_POST['page'])) + 1 ;
+                $posts_per_page = $page;
+            }else{
+                $posts_per_page = get_option( 'posts_per_page' );        
+            }
+            
+            $html = '';
 
             
 
@@ -32,8 +38,6 @@ class Render_Posts_Ajax{
                 "posts_per_page" => $post_per_page,
                 "paged" => $page,
             );
-
-            $the_query = new \WP_Query( $args );
 
             $receive_posts = get_posts($args);
 
@@ -68,17 +72,15 @@ class Render_Posts_Ajax{
      */
     private function  default_template($id){
         $c_id = $id; 
-        $title = get_the_title($c_id);
-        $post_img_id = get_post_thumbnail_id($c_id);
-        $post_img_url = return_post_img_url( $c_id , 'large' );
-        $title = get_the_title($c_id);
+        $post_img_url = get_the_post_thumbnail_url($c_id, 'large');
+        $title = esc_html(get_the_title($c_id));
         $html = '';
 
         $html .= '<a href="'.get_permalink().'" class="default-post-template">';
             $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
             
             $html .= '<div class="text-section">';
-                $html .= '<h3 class="title">'.$title.'</h3>';            
+                $html .= '<h3 class="title">'.$title.'</h3>';
             $html .= '</div>';
         $html .= '</a>';
 
