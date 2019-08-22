@@ -57,7 +57,7 @@ class Render_Post_Register_shortcode{
         $uid = uniqid();
         $render_func = $type.'_template';
         $total_posts = wp_count_posts($type)->publish;
-        $containe_title = false;
+        $contain_title = false;
     
         // Get the posts
         $posts_arr = get_posts( [
@@ -68,11 +68,11 @@ class Render_Post_Register_shortcode{
     
     
         if( isset($title) || isset($detail) ){
-            $containe_title = true;
+            $contain_title = true;
         }
     
         // Prepare the title and the detail html if user provide
-        if($containe_title===true){
+        if($contain_title===true){
             $title_html .= '<div class="post-title-section">';
                 $title_html .= !empty($title) ? "<h2>$title</h2>" : '' ;
                 $title_html .= !empty($detail) ? "<p>$detail</p>": '';
@@ -91,7 +91,7 @@ class Render_Post_Register_shortcode{
             $loadmore_att_str = '';
             $admin_url = admin_url('admin-ajax.php');
     
-            // Prepair The ajax Request Ncessery attribute
+            // Prepare The ajax Request Necessary attribute
             $attr['data-posttype'] = $type;
             $attr['data-posts_per_page'] = $posts_per_page;
             $attr['data-pagenumber'] = 1;
@@ -119,7 +119,7 @@ class Render_Post_Register_shortcode{
             $background = 'bg-gray' ;
         }
         
-        // Prepair wrapper class
+        // Prepare wrapper class
         $wrapper_class = 'render-posts-main-wrapper '.$type.'-posts-wrapper '.$background  ;
     
         $html .= "<div class='".$wrapper_class."' >";
@@ -164,8 +164,9 @@ class Render_Post_Register_shortcode{
         $html = '';
 
         $html .= '<a href="'.get_permalink().'" class="default-post-template">';
-            $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
-            
+            if($post_img_url):
+                $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
+            endif;            
             $html .= '<div class="text-section">';
                 $html .= '<h3 class="title">'.$title.'</h3>';
             $html .= '</div>';

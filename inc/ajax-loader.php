@@ -68,7 +68,7 @@ class Render_Posts_Ajax{
     /**
      * Default Post template 
      * It will called when user will not provide any post template 
-     * related with his posttype
+     * related with his post_type
      */
     private function  default_template($id){
         $c_id = $id; 
@@ -77,7 +77,9 @@ class Render_Posts_Ajax{
         $html = '';
 
         $html .= '<a href="'.get_permalink().'" class="default-post-template">';
-            $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
+            if($post_img_url):
+                $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
+            endif;
             
             $html .= '<div class="text-section">';
                 $html .= '<h3 class="title">'.$title.'</h3>';
