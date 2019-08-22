@@ -1,26 +1,32 @@
-.render-posts-items{
+.render-posts-items {
     display: flex;
     flex-wrap: wrap;
     margin: 0 -15px;
-}  
-.render-posts-item{
+}
+
+.render-posts-item {
     width: 33.33%;
     padding: 15px;
 }
 
 
 @media only screen and (max-width: 600px) {
-    .render-posts-items{    
+    .render-posts-items {
         margin: 0 -10px;
     }
-    .render-posts-item{
+
+    .render-posts-item {
         padding: 10px;
     }
 }
 
-.render-posts-loadmore-btn-container{
+.render-posts-loadmore-btn-container {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px 0;
+}
+
+.default-post-template {
+    text-decoration: none !important;
 }

@@ -38,13 +38,13 @@ class Render_Post_Register_shortcode{
         // store post slug in a array
         $posts_type_arr = array_keys( $wp_post_types );
 
-        //exit if type not porvide and invalid post type
+        //exit if type not porvide OR invalid post type
         if(  !isset($type)  || !in_array($type,$posts_type_arr) ){
             return '';
         }
         // collect posts per page
         if( isset($number) && is_numeric( $number ) ){
-            $posts_per_page = $number;
+            $posts_per_page = $number ;
         }else{
             $posts_per_page = get_option( 'posts_per_page' );        
         }
@@ -93,8 +93,7 @@ class Render_Post_Register_shortcode{
     
             // Prepare The ajax Request Necessary attribute
             $attr['data-posttype'] = $type;
-            $attr['data-posts_per_page'] = $posts_per_page;
-            $attr['data-pagenumber'] = 1;
+            $attr['data-posts_per_page'] = $posts_per_page;            
             $attr['data-ajax-url'] = $admin_url;
             $attr['data-container'] = $uid;
             $attr['data-functionname'] =  $render_func;
@@ -163,12 +162,13 @@ class Render_Post_Register_shortcode{
         $title = esc_html(get_the_title($c_id));
         $html = '';
 
-        $html .= '<a href="'.get_permalink().'" class="default-post-template">';
+        $html .= '<a href="'.get_permalink($c_id).'" class="default-post-template">';
             if($post_img_url):
                 $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
             endif;            
             $html .= '<div class="text-section">';
                 $html .= '<h3 class="title">'.$title.'</h3>';
+                $html .= '<p>'.get_the_excerpt($c_id).'</p>';
             $html .= '</div>';
         $html .= '</a>';
 

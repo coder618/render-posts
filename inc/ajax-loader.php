@@ -8,35 +8,51 @@ class Render_Posts_Ajax{
         
         // check nonce
         if( isset($_POST['nonce']) && 
-            wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 1  || 
-            wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 2 ) :            
-            // filter input
+            ( wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 1  || wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 2 )
+        ):
+
+            /**
+             * SANITIZE Inputs
+             * 
+            */     
             foreach($_POST as $k => $v):
                 $k = filter_var( sanitize_text_field($k) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
                 $v = filter_var( sanitize_text_field($v) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
                 $_POST[$k] = $v;
             endforeach;
-            
-            $post_type        = filter_var(sanitize_text_field($_POST['post_type']) ,FILTER_SANITIZE_STRING    );
-            $post_per_page    = filter_var(sanitize_text_field($_POST['posts_per_page']),FILTER_SANITIZE_STRING    );
-            $function_name    = filter_var(sanitize_text_field($_POST['function_name']),FILTER_SANITIZE_STRING    );
-            
-            // collect posts per page
-            if( is_numeric( (int) $page ) ){
-                $page             = (int)(trim($_POST['page'])) + 1 ;
-                $posts_per_page = $page;
-            }else{
-                $posts_per_page = get_option( 'posts_per_page' );        
+
+            /**
+             * Validate some Input Information
+             * 
+            */        
+            // Get all the registered post information
+            global $wp_post_types;
+            // store post slug in a array
+            $posts_type_arr = array_keys( $wp_post_types );
+
+            //exit if post_type not Provide  or  post type not exist in the database
+            if(  !array_key_exists('post_type', $_POST)  || !in_array($_POST['post_type'],$posts_type_arr) ){
+                return '';
             }
+
+            // collect posts per page
+            if(  array_key_exists('posts_per_page', $_POST)  && is_numeric($_POST['posts_per_page'] ) ){
+                $posts_per_page = $_POST['posts_per_page'];
+            }else{
+                $posts_per_page = get_option( 'posts_per_page' );
+            }
+
+            $function_name    = $_POST['function_name'];
+            
+            // Collect Page number
+            $q_page = array_key_exists('page',$_POST) && is_numeric($_POST['page']) ? ($_POST['page'] + 1) : 1;
             
             $html = '';
 
-            
-
             $args = array(
-                'post_type' => $post_type,
-                "posts_per_page" => $post_per_page,
-                "paged" => $page,
+                'post_type' => $_POST['post_type'],
+                "posts_per_page" => $posts_per_page,
+                "paged" =>  $q_page
             );
 
             $receive_posts = get_posts($args);
@@ -76,13 +92,14 @@ class Render_Posts_Ajax{
         $title = esc_html(get_the_title($c_id));
         $html = '';
 
-        $html .= '<a href="'.get_permalink().'" class="default-post-template">';
+        $html .= '<a href="'.get_permalink($c_id).'" class="default-post-template">';
             if($post_img_url):
                 $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
             endif;
             
             $html .= '<div class="text-section">';
                 $html .= '<h3 class="title">'.$title.'</h3>';
+                $html .= '<p>'.get_the_excerpt($c_id).'</p>';
             $html .= '</div>';
         $html .= '</a>';
 
