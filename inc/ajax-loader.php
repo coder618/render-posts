@@ -9,48 +9,48 @@ class Render_Posts_Ajax{
         // check nonce
         if( isset($_POST['nonce']) && 
             ( wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 1  || wp_verify_nonce( $_POST['nonce'], 'loadmore_ajax_request' ) === 2 )
-        ):
+        ):     
+            //exit if post_type not Provide  or  post type not exist in the wordpress
+            if(isset($_POST['post_type']) && !empty($_POST['post_type'])){
+                // Get all the registered post information
+                global $wp_post_types;
+                // store post slug in a array
+                $posts_type_arr = array_keys( $wp_post_types );
 
-            /**
-             * SANITIZE Inputs
-             * 
-            */     
-            foreach($_POST as $k => $v):
-                $k = filter_var( sanitize_text_field($k) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
-                $v = filter_var( sanitize_text_field($v) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
-                $_POST[$k] = $v;
-            endforeach;
+                $post_type = filter_var( sanitize_text_field($_POST['post_type']) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
 
-            /**
-             * Validate some Input Information
-             * 
-            */        
-            // Get all the registered post information
-            global $wp_post_types;
-            // store post slug in a array
-            $posts_type_arr = array_keys( $wp_post_types );
+                if(!in_array($post_type,$posts_type_arr)){
+                    echo false ;
+                    die();
+                }           
+            }else{
+                echo false ;
+                die();                
+            }          
+            
 
-            //exit if post_type not Provide  or  post type not exist in the database
-            if(  !array_key_exists('post_type', $_POST)  || !in_array($_POST['post_type'],$posts_type_arr) ){
-                return '';
+            // Collect Query Page number otherwise EXIT
+            if(isset($_POST['page']) && !empty($_POST['page']) && intval($_POST['page'] ) ){
+                $q_page = intval($_POST['page']) + 1;
+            }else{
+                echo false ;
+                die();
             }
-
-            // collect posts per page
-            if(  array_key_exists('posts_per_page', $_POST)  && is_numeric($_POST['posts_per_page'] ) ){
-                $posts_per_page = $_POST['posts_per_page'];
+            
+            // Grab Posts Per Page information
+            if(isset($_POST['posts_per_page']) && !empty($_POST['posts_per_page']) && intval($_POST['posts_per_page'] ) ){
+                $posts_per_page = intval($_POST['posts_per_page'] );
             }else{
                 $posts_per_page = get_option( 'posts_per_page' );
             }
 
-            $function_name    = $_POST['function_name'];
-            
-            // Collect Page number
-            $q_page = array_key_exists('page',$_POST) && is_numeric($_POST['page']) ? ($_POST['page'] + 1) : 1;
-            
+            // Make the Render function name
+            $function_name = $post_type . '_template';
+
             $html = '';
 
             $args = array(
-                'post_type' => $_POST['post_type'],
+                'post_type' => $post_type,
                 "posts_per_page" => $posts_per_page,
                 "paged" =>  $q_page
             );

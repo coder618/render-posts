@@ -96,7 +96,6 @@ class Render_Post_Register_shortcode{
             $attr['data-posts_per_page'] = $posts_per_page;            
             $attr['data-ajax-url'] = $admin_url;
             $attr['data-container'] = $uid;
-            $attr['data-functionname'] =  $render_func;
             $attr['data-page'] = 1;
             $attr['data-nonce'] = wp_create_nonce("loadmore_ajax_request");
     
