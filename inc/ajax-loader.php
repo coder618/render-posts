@@ -30,7 +30,7 @@ class Render_Posts_Ajax{
             
 
             // Collect Query Page number otherwise EXIT
-            if(isset($_POST['page']) && !empty($_POST['page']) && intval($_POST['page'] ) ){
+            if(isset($_POST['page']) && !empty($_POST['page']) && intval($_POST['page'] ) > 0 ){
                 $q_page = intval($_POST['page']) + 1;
             }else{
                 echo false ;
@@ -38,7 +38,7 @@ class Render_Posts_Ajax{
             }
             
             // Grab Posts Per Page information
-            if(isset($_POST['posts_per_page']) && !empty($_POST['posts_per_page']) && intval($_POST['posts_per_page'] ) ){
+            if(isset($_POST['posts_per_page']) && !empty($_POST['posts_per_page']) && intval($_POST['posts_per_page'] ) >0   ){
                 $posts_per_page = intval($_POST['posts_per_page'] );
             }else{
                 $posts_per_page = get_option( 'posts_per_page' );

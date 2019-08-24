@@ -43,7 +43,7 @@ class Render_Post_Register_shortcode{
             return '';
         }
         // collect posts per page
-        if( isset($number) && is_numeric( $number ) ){
+        if( isset($number) && intval( $number ) > 0 ){
             $posts_per_page = $number ;
         }else{
             $posts_per_page = get_option( 'posts_per_page' );        
