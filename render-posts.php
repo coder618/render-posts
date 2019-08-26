@@ -47,7 +47,7 @@ class Render_Posts_Main{
     }
 
     /**
-     * Enque all Necessery assets
+     * Enqueue all Necessary assets
      * 
      */
     public function enqueue_assets() {

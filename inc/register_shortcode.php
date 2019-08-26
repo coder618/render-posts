@@ -8,12 +8,8 @@
 ]
 */
 
-class Render_Post_Register_shortcode{    
+class Render_Post_Register_shortcode{
 
-    public function __construct() {
-        // add_shortcode("render-posts", $this->render_posts() );
-    }
-    
     public function render_posts( $atts ){
 
         /**
@@ -38,7 +34,7 @@ class Render_Post_Register_shortcode{
         // store post slug in a array
         $posts_type_arr = array_keys( $wp_post_types );
 
-        //exit if type not porvide OR invalid post type
+        //exit if type not Provide OR invalid post type
         if(  !isset($type)  || !in_array($type,$posts_type_arr) ){
             return '';
         }
