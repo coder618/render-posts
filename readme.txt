@@ -84,7 +84,7 @@ Example function:
     $title = get_the_title($post_id);
     $html = '';
 
-    $html .= '<a href="'.get_permalink().'" class="default-post-template">';
+    $html .= '<a href="'.get_permalink($post_id).'" class="default-post-template">';
         $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
         
         $html .= '<div class="text-section">';
