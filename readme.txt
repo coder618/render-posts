@@ -77,23 +77,24 @@ eg: post_template($post_id) , event_template($post_id), member_template($post_id
 
 Example function:
 // Template For Post post type.
-`function post_template($post_id){
-    $title = get_the_title($post_id);
-    $post_img_id = get_post_thumbnail_id($post_id);
-    $post_img_url = return_post_img_url( $post_id , 'large' );
-    $title = get_the_title($post_id);
-    $html = '';
-
-    $html .= '<a href="'.get_permalink($post_id).'" class="default-post-template">';
-        $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
-        
-        $html .= '<div class="text-section">';
-            $html .= '<h3 class="title">'.$title.'</h3>';            
-        $html .= '</div>';
-    $html .= '</a>';
-
-    return $html;
-}`
+`
+function  post_template($id){
+        $c_id = $id; 
+        $post_img_url = get_the_post_thumbnail_url($c_id, 'large');
+        $title = esc_html(get_the_title($c_id));
+        $html = '';
+        $html .= '<a href="'.get_permalink($c_id).'" class="default-post-template">';
+            if($post_img_url):
+                $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
+            endif;            
+            $html .= '<div class="text-section">';
+                $html .= '<h3 class="title">'.$title.'</h3>';
+                $html .= '<p>'.get_the_excerpt($c_id).'</p>';
+            $html .= '</div>';
+        $html .= '</a>';
+        return $html;
+}
+`
 
 Your defined  template function will receive a single post id  as its first argument. you can use the id to manupulate/make the posts markup for post/cpt template.
 After create the function, you have to Attached/link your created function to function.php or via other plugin so that your created function can be access from any place from the wordpress.
