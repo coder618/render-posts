@@ -4,7 +4,8 @@
  * Description: Render Posts Easily with Shortcode.   [render-posts ]
  * Author: coder618
  * Author URI: https://coder618.github.io
- * Version: 1.0.0 
+ * Version: 2.0.1
+ * License: GPL2
 */
 
 class Render_Posts_Main{

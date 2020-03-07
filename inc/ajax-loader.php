@@ -44,6 +44,12 @@ class Render_Posts_Ajax{
                 $posts_per_page = get_option( 'posts_per_page' );
             }
 
+            // Grab the category name
+            if(isset($_POST['cat_name']) && !empty($_POST['cat_name']) && trim(strlen($_POST['cat_name'])) > 0   ){
+                $category_name = trim($_POST['cat_name']);
+            }
+
+
             // Make the Render function name
             $function_name = $post_type . '_template';
 
@@ -54,57 +60,46 @@ class Render_Posts_Ajax{
                 "posts_per_page" => $posts_per_page,
                 "paged" =>  $q_page
             );
+            // add  name in the argument 
+            if(isset($category_name)){
+                $args['category_name'] = $category_name;
+            }
 
-            $receive_posts = get_posts($args);
 
-            foreach( $receive_posts as $s_p ):                
-                $html .= "<div class='item render-posts-item'>";
+            // $receive_posts = get_posts($args);
 
-                    // check if user define any function for the post template, otherwise we will use plugin default one
-                    if(function_exists($function_name)){
-                        $html .= $function_name($s_p->ID);    
-                    }else{
-                        $html .= $this->default_template($s_p->ID);
-                    }
+            $file_path = get_template_directory() .'/loop-templates/content-'. $post_type.'.php';
+            $file = file_exists($file_path);
+            $not_found_str = __('Please Create a file at', 'render-posts');
+            $not_found_str .= $file_path;
+            $not_found_str .= __('to render the single template', 'render-posts');
+            
 
-                $html .= "</div>";
-            endforeach;
 
-            echo  $html;
+            $posts_query = new WP_Query( $args );
+            if ( $posts_query->have_posts() ) :
+            
+                while ( $posts_query->have_posts() ) : $posts_query->the_post(); 
+                    if( $file ):                
+                        echo "<div class='item render-posts-item'>";
+                            get_template_part("loop-templates/content", $post_type);
+                        echo "</div>";
+                    else:
+                        echo "<div class='item'>{$not_found_str}</div>";                       
+                    endif;
+                    
+                endwhile;
+                wp_reset_postdata();
+            
+            endif;
+
             die();
 
         else:
             echo false ;
             die();
         endif;
-        
-        
     }
 
-    /**
-     * Default Post template 
-     * It will called when user will not provide any post template 
-     * related with his post_type
-     */
-    private function  default_template($id){
-        $c_id = $id; 
-        $post_img_url = get_the_post_thumbnail_url($c_id, 'large');
-        $title = esc_html(get_the_title($c_id));
-        $html = '';
-
-        $html .= '<a href="'.get_permalink($c_id).'" class="default-post-template">';
-            if($post_img_url):
-                $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
-            endif;
-            
-            $html .= '<div class="text-section">';
-                $html .= '<h3 class="title">'.$title.'</h3>';
-                $html .= '<p>'.get_the_excerpt($c_id).'</p>';
-            $html .= '</div>';
-        $html .= '</a>';
-
-        return $html;
-
-    }
 
 }

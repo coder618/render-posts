@@ -18,8 +18,8 @@ class Render_Post_Register_shortcode{
         */     
         $valid_vars = [];
         foreach( $atts as $k=>$v ):            
-            $k = filter_var( sanitize_text_field($k) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
-            $v = filter_var( sanitize_text_field($v) ,FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+            $k = trim(sanitize_text_field($k));
+            $v = trim(sanitize_text_field($v));                        
             $valid_vars[$k] =  $v;
         endforeach;
 
@@ -29,6 +29,7 @@ class Render_Post_Register_shortcode{
          * Validate Input Information
          * 
         */        
+
         // Get all the registered post information
         global $wp_post_types;
         // store post slug in a array
@@ -44,24 +45,28 @@ class Render_Post_Register_shortcode{
         }else{
             $posts_per_page = get_option( 'posts_per_page' );        
         }
-        
-        
 
-        $html = '';
         $title_html = '';
         $load_more_html = '';
-        $uid = uniqid();
-        $render_func = $type.'_template';
-        $total_posts = wp_count_posts($type)->publish;
+        $uid = uniqid();        
+        // $total_posts = wp_count_posts($type)->publish;
         $contain_title = false;
-    
-        // Get the posts
-        $posts_arr = get_posts( [
+
+        // query argument 
+        $args = [
             'posts_per_page'   => $posts_per_page ,
             'post_type'        => $type,   
             'paged'            => 1,
-        ]);
+        ];
+
+        if(isset( $cat ) && strlen($cat)){
+            $args['category_name'] = trim($cat);
+        }
+
     
+        // Get the posts
+        // $posts_arr = get_posts( $args );
+        $posts_query = new WP_Query( $args );
     
         if( isset($title) || isset($detail) ){
             $contain_title = true;
@@ -74,15 +79,14 @@ class Render_Post_Register_shortcode{
                 $title_html .= !empty($detail) ? "<p>$detail</p>": '';
             $title_html .= "</div>";
         }
-    
-        
         
         /**
          * Prepare the loadmore button html
          * 
          */
-        // Check If current shown posts is smaller than total post and no loadmore define
-        if( $total_posts > count($posts_arr)  && !isset($noloadmore) ){
+        // Check If current shown posts is smaller than total post and no loadmore define        
+        // if( $total_posts > ($posts_query->post_count)  && !isset($noloadmore) ){
+        if( $posts_query->post_count >= $posts_per_page  && !isset($noloadmore) ){
             $attr= [];
             $loadmore_att_str = '';
             $admin_url = admin_url('admin-ajax.php');
@@ -96,9 +100,13 @@ class Render_Post_Register_shortcode{
             $attr['data-nonce'] = wp_create_nonce("loadmore_ajax_request");
     
             $attr['class'] = "btn btn-primary btn-lg load-more-posts-btn";
+
+            if(isset( $cat ) && strlen($cat)){
+                $attr['data-cat-name'] = trim($cat);
+            }
     
             // Make the attribute string
-            foreach($attr as $att=> $att_val){
+            foreach($attr as $att => $att_val){
                 $loadmore_att_str .= $att . " = '".$att_val."'";                    
             }
     
@@ -115,61 +123,48 @@ class Render_Post_Register_shortcode{
         
         // Prepare wrapper class
         $wrapper_class = 'render-posts-main-wrapper '.$type.'-posts-wrapper '.$background  ;
-    
-        $html .= "<div class='".$wrapper_class."' >";
-            $html .= "<div class='posts-wrapper ".$type."-wrapper'>";
-    
-                $html .= $title_html;
-    
-                $html .= "<div class='items items-container render-posts-items $uid post-type-".$type."'>";
-    
-                    foreach( $posts_arr as $sp_data ):
-                        $html .= "<div class='item render-posts-item'>";                              
-                            // check if there have any render_$post_type or note, if not we will use our default function 
-                            if(function_exists($render_func)){
-                                $html .= $render_func($sp_data->ID);
-                            }else{
-                                $html .= $this->default_template($sp_data->ID);
-                            }
-                        $html .= "</div>";
-                    endforeach;
+
+        ob_start();
+        ## check the file existency
+        $file_path = get_template_directory() .'/loop-templates/content-'. $type.'.php';
+        $file = file_exists($file_path);
+        $not_found_str = __('Please Create a file at ', 'render-posts');
+        $not_found_str .= $file_path;
+        $not_found_str .= __(' to render the single template', 'render-posts');
+        ?>
+
+        <?php if ( $posts_query->have_posts() ) : ?>
+        <div class="<?php echo $wrapper_class ?>">
+            <div class='posts-wrapper <?php echo $type ?>-wrapper'>
+                <?php echo $title_html ?>
+                <div class='items items-container render-posts-items <?php echo $uid ?> post-type-<?php echo  $type ?>'>
+
+                    <!-- the loop -->
+                    <?php while ( $posts_query->have_posts() ) : $posts_query->the_post(); ?>
+                        
+                        <?php 
+                            if( $file ): // if file(template) exist                            
+                                echo "<div class='item'>";
+                                    get_template_part("loop-templates/content", $type);                                   
+                                echo "</div>";
+                            else:
+                                echo "<div class='item'>{$not_found_str}</div>";                       
+                            endif;
+                        ?>      
+
+                    <?php endwhile; ?>
                     
-                $html .= "</div>";
-    
-                $html .= $load_more_html;
-    
-            $html .= "</div>";
-    
-        $html .= '</div>';
-    
-        return ($html);
-    
+
+                    <?php wp_reset_postdata(); ?>
+
+        
+                </div><!-- items-container wrapper END -->    
+                <?php echo $load_more_html ?>            
+            </div>
+        </div>
+
+        <?php 
+        endif; 
+        return ob_get_clean();
     }
-
-    /**
-     * Default Post template 
-     * It will called when user will not provide any post template 
-     * related with his posttype
-     */
-    private function  default_template($id){
-        $c_id = $id; 
-        $post_img_url = get_the_post_thumbnail_url($c_id, 'large');
-        $title = esc_html(get_the_title($c_id));
-        $html = '';
-
-        $html .= '<a href="'.get_permalink($c_id).'" class="default-post-template">';
-            if($post_img_url):
-                $html .= '<img src="'.$post_img_url.'" alt="'.$title.'">';
-            endif;            
-            $html .= '<div class="text-section">';
-                $html .= '<h3 class="title">'.$title.'</h3>';
-                $html .= '<p>'.get_the_excerpt($c_id).'</p>';
-            $html .= '</div>';
-        $html .= '</a>';
-
-        return $html;
-
-    }
-    
-
 }

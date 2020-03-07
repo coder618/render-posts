@@ -1,32 +1,33 @@
 .render-posts-items {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -15px;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -15px;
 }
 
+.render-posts-items .item,
 .render-posts-item {
-    width: 33.33%;
-    padding: 15px;
+	width: 33.33%;
+	padding: 15px;
 }
-
 
 @media only screen and (max-width: 600px) {
-    .render-posts-items {
-        margin: 0 -10px;
-    }
+	.render-posts-items {
+		margin: 0 -10px;
+	}
 
-    .render-posts-item {
-        padding: 10px;
-    }
+	.render-posts-items .item,
+	.render-posts-item {
+		padding: 10px;
+	}
 }
 
 .render-posts-loadmore-btn-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px 0;
 }
 
 .default-post-template {
-    text-decoration: none !important;
+	text-decoration: none !important;
 }
